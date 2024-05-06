@@ -1,7 +1,9 @@
 package com.tcp.server.core;
 
+import com.tcp.server.core.telegram.TelegramData;
+
 public interface Receiver {
-    byte[] getData();
+    byte[] getBytes();
     int getRead();
-    String getMessage();
+    TelegramData getData();
 }

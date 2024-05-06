@@ -17,7 +17,6 @@ public class TcpServer implements Server {
 
     private final int serverPort = 9999;
     private ServerSocket serverSocket;
-    private final TcpServerRepository tcpServerRepository;
     private final ServerTelegramParser tcpServerTelegramParser;
 
     @Override
@@ -30,7 +29,6 @@ public class TcpServer implements Server {
             InetSocketAddress isa1 = (InetSocketAddress) isa;
             log.info("Connect : {}", isa1.getHostName());
 
-            tcpServerRepository.addSocket(socket);
             Receiver receive = tcpServerTelegramParser.receive(socket);
             tcpServerTelegramParser.send(socket, receive);
 

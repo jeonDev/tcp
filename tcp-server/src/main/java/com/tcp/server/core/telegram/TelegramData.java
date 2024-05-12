@@ -14,8 +14,8 @@ public interface TelegramData {
             int size = telegram.size();
             field.setAccessible(true);
 
-            String tempTelegram = message.substring(i, size);
-
+            String tempTelegram = message.substring(i, i + size);
+            i = i + size;
             if (type == int.class) {
                 field.setInt(this, Integer.parseInt(tempTelegram));
             } else if (type == String.class) {
@@ -28,6 +28,8 @@ public interface TelegramData {
     }
 
     default String generateTelegram() {
+
+
         return "";
     }
 }

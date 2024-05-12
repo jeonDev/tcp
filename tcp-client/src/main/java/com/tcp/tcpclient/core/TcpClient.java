@@ -14,7 +14,7 @@ public class TcpClient {
         OutputStream os = socket.getOutputStream();
 
 //        String message = "0000Hi Hello!!      "; // TEST (Stirng, String)
-        String message = "00010000000100"; // SECOND (String, int)
+        String message = "0001ABC0000000100"; // SECOND (String, int)
         os.write(message.getBytes());
         os.flush();
 

@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: tcp-server
+
+telegram:
+  type-begin-index: 0
+  type-size: 4

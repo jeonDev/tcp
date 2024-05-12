@@ -3,13 +3,13 @@ package com.tcp.server.core;
 import com.tcp.server.core.telegram.TelegramData;
 import com.tcp.server.core.telegram.TelegramType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -19,6 +19,13 @@ import java.nio.charset.StandardCharsets;
 public class TcpServerTelegramParser implements ServerTelegramParser {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    @Value("${telegram.type-begin-index}")
+    private Integer telegramTypeBeginIndex;
+
+    @Value("${telegram.type-size}")
+    private Integer telegramTypeSize;
+
     @Override
     public Receiver receive(Socket socket) throws IOException {
         InputStream is = socket.getInputStream();
@@ -32,19 +39,18 @@ public class TcpServerTelegramParser implements ServerTelegramParser {
             throw new IllegalArgumentException("전문 파싱 에러");
 
         // parser
-        String type = message.substring(0, 4);
-        Class<? extends TelegramData> telegramData = TelegramType.getType(type);
         try {
-            Method method = telegramData.getMethod("messageToTelegram", telegramData);
-            TelegramData data = (TelegramData) method.invoke(telegramData, message);
             log.info("Receive Message : {} ", message);
+            String type = message.substring(telegramTypeBeginIndex, telegramTypeSize);
+            TelegramData telegramObj = TelegramType.getType(type);
+            TelegramData telegram = telegramObj.messageToTelegram(message);
 
             return TcpReceiver.builder()
                     .bytes(bytes)
                     .read(read)
-                    .data(data)
+                    .data(telegram)
                     .build();
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 

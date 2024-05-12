@@ -59,7 +59,12 @@ public class TcpServerTelegramParser implements ServerTelegramParser {
     @Override
     public void send(Socket socket, Receiver receiver) throws IOException {
         OutputStream os = socket.getOutputStream();
-        os.write(receiver.getData().toString().getBytes());
-        os.flush();
+        try {
+            String message = receiver.getData().generateTelegram();
+            os.write(message.getBytes());
+            os.flush();
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
